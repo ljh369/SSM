@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace表示命名空间--> 
+<mapper namespace="qinyewei.dao.VideoDao">
+	<!-- 通过ID查询视频信息 -->
+	<select id="findVideo" parameterType="Integer" resultType="Video"> 
+		SELECT * FROM video 
+		<!-- 如果不为0则查询单个视频信息 -->
+		<if test="videoid!=0">
+			where videoId=#{videoid} 
+		</if>
+		<!-- 如果为0，则从中随机抽取20个 -->
+		<if test="videoid==0">
+			where examine=1 
+			ORDER BY rand() LIMIT 20
+		</if>
+	</select>
+	<!-- 根据类型查询相对应类型的所有视频 一共有MAD,生活，美食，音乐，学习5个分类 -->
+	<select id="findVideofortype" parameterType="Integer" resultType="Video"> 
+		SELECT * FROM video
+		<if test="videoid==1">
+			where type="MAD/AMV" and examine=1 
+		</if>
+		<if test="videoid==2">
+			where type="生活" and examine=1 
+		</if>
+		<if test="videoid==3">
+			where type="美食" and examine=1 
+		</if>
+		<if test="videoid==4">
+			where type="音乐" and examine=1 
+		</if>
+		<if test="videoid==5">
+			where type="学习" and examine=1 
+		</if>
+	</select>
+	<!-- 查询所有视频信息 -->
+	<select id="findAllVideo" parameterType="Integer" resultType="Video"> 
+		SELECT * FROM video
+	</select>
+	<!--查询单个视频信息-->
+	<select id="findoneVideo" parameterType="Integer" resultType="Video"> 
+		SELECT * FROM video where videoId=#{videoid} 
+	</select>
+	<!--查询用户收藏的视频id-->
+	<select id="findFavoriteVideo" parameterType="String" resultType="Favorite"> 
+		SELECT * FROM favorite where username=#{username} 
+	</select>
+	<!--查询单个指定用户收藏的视频信息-->
+	<select id="findoneFavoriteVideo" parameterType="Favorite" resultType="Integer"> 
+		SELECT FId FROM favorite where username=#{username} and videoid=#{videoid}
+	</select>
+	<!--查询某作者的所有视频信息-->
+	<select id="finduploaderVideo" parameterType="String" resultType="Video"> 
+		SELECT * FROM video where uploader=#{uploader} 
+	</select>
+	<!--模糊查询视频信息-->
+	<select id="finduplikeVideo" parameterType="String" resultType="Video"> 
+		SELECT * FROM video where videoName like concat('%',#{keywords},'%') or type like concat('%',#{keywords},'%')
+	</select>
+	<!--删除单个视频信息-->
+	<delete id="deletVideo" parameterType="Integer">
+		DELETE FROM video where videoId=#{videoid} 
+	</delete>
+	<!-- 添加上传视频信息 -->
+	<insert id="addVideo" parameterType="User" >
+		insert into video (videoName,imgUrl,videoUrl,type,uploader,date,pageView,favoriteAmount,examine) VALUES (#{videoname},#{imgurl},#{videourl},#{type},#{uploader},#{date},0,0,#{examine} )
+	</insert>
+	<!-- 添加视频至收藏夹 -->
+	<insert id="addfVideo" parameterType="Favorite" >
+		insert into favorite (username,videoid) VALUES (#{username},#{videoid})
+	</insert>
+	<!-- 浏览量+1 -->
+	<update id="addVideoview" parameterType="Integer">
+	UPDATE video SET pageView=#{pageview} where videoId=#{videoid} 
+	</update>
+	<!--从收藏夹删除视频(根据FId)-->
+	<delete id="deletefVideo" parameterType="Integer">
+		DELETE FROM favorite where FId=#{FId} 
+	</delete>
+	<!--从收藏夹删除视频(根据videoid)-->
+	<delete id="deletefVideo2" parameterType="Integer">
+		DELETE FROM favorite where videoid=#{videoid} 
+	</delete>
+	<!--查询所有未审核的视频信息-->
+	<select id="findVideoforexamine" resultType="Video"> 
+		SELECT * FROM video where examine=0
+	</select>
+	<!-- 审核通过视频 -->
+	<update id="passvideo" parameterType="Integer">
+	UPDATE video SET examine=1 where videoId=#{videoid} 
+	</update>
+	<!-- 浏览量+1 -->
+	<update id="goodvideo" parameterType="Integer">
+	UPDATE video SET favoriteAmount=#{favoriteAmount} where videoId=#{videoid} 
+	</update>
+	<!--按照点击量从大到小从数据中取出视频数据-->
+	<select id="hotvideo" resultType="Video"> 
+		SELECT * FROM video ORDER BY pageView desc 
+	</select>
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace表示命名空间--> 
+<mapper namespace="qinyewei.dao.UserDao">
+	<!-- 查询用户账户与密码 -->
+	<select id="findUser" parameterType="String" resultType="User"> 
+		select * from user where username=#{username} and password=#{password}
+	</select>
+	<!-- 查询用户信息 -->
+	<select id="listdateUser" parameterType="String" resultType="User"> 
+		select * from user where username=#{username}
+	</select>
+	<!-- 添加新用户 -->
+	<insert id="addUser" parameterType="String" >
+		insert into user (username,password) VALUES (#{username},#{password})
+	</insert>
+	<!-- 修改个人信息 -->
+	<update id="updateUser">
+		update user set password=#{password},sex=#{sex} where username=#{username}
+	</update>
+	<!-- 查询管理员账户与密码 -->
+	<select id="findAdmin" parameterType="String" resultType="User"> 
+		select * from user where username=#{adminname} and password=#{adminpassword}
+	</select>
+	<!-- 查询用户头像路径 -->
+	<select id="finduserhead" parameterType="String" resultType="String"> 
+		select userimgurl from user where username=#{username}
+	</select>
+	<!-- 更新用户头像路径 -->
+	<update id="updateuserhead">
+		update user set userimgurl=#{userimgurl} where username=#{username}
+	</update>
+</mapper>

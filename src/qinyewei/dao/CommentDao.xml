@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace表示命名空间--> 
+<mapper namespace="qinyewei.dao.CommentDao">
+	<!-- 查询某视频下的评论 -->
+	<select id="listComment" parameterType="Integer" resultType="Comment"> 
+		select * from comment where videoidbycomment=#{videoidbycomment}
+	</select>
+	<!-- 向某视频下提交评论 -->
+	<insert id="addComment" parameterType="Comment" >
+		insert into comment (user,commentcontent,commentdate,videoidbycomment,userimgurl) VALUES (#{user},#{commentcontent},#{commentdate},#{videoidbycomment},#{userimgurl})
+	</insert>
+	<!-- 向数据库中提交意见与建议 -->
+	<insert id="addadvise" parameterType="advise" >
+		insert into advise (name,phone,content,date,userimgurl) VALUES (#{username},#{phone},#{content},#{date},#{userimgurl})
+	</insert>
+	<!-- 查询所有的意见与建议 -->
+	<select id="listadvise" resultType="Advise"> 
+		select * from advise
+	</select>
+	<!--删除的意见与建议-->
+	<delete id="deleteadvise" parameterType="Integer">
+		DELETE FROM advise where adid=#{adid} 
+	</delete>
+	<!-- 举报评论 -->
+	<insert id="reportComment" parameterType="Report" >
+		insert into report (reportuser,commentid,user,commentcontent,commentdate,videoidbycomment,userimgurl) 
+		VALUES (#{reportuser},#{commentid},#{user},#{commentcontent},#{commentdate},#{videoidbycomment},#{userimgurl})
+	</insert>
+	<!--删除举报评论的信息-->
+	<delete id="deletereport" parameterType="Integer">
+		DELETE FROM report where reportid=#{reportid} 
+	</delete>
+	<!--删除举报评论的信息-->
+	<delete id="deleteComment" parameterType="Integer">
+		DELETE FROM comment where commentid=#{commentid} 
+	</delete>
+	<!-- 查询所有的举报评论 -->
+	<select id="listreport" resultType="Report"> 
+		select * from report
+	</select>
+</mapper>
